@@ -1,116 +1,114 @@
-■6-02：STEP 0 Apacheコンテナを作成しておく
+■6-02: STEP 0 Create an Apache container
 docker run --name apa000ex19 -d -p 8089:80 httpd
 
 
-■6-02：［事前準備］index.htmlファイルを作成する
-(chapter06フォルダのindex.html 参照)
+■6-02: [Preparation] Create the index.html file
+(Refer to the index.html in the chapter06 folder)
 
 
-■6-02：STEP 2 「cp」コマンドを実行して、ホストからコンテナへファイルをコピー
-※「ユーザー名」は使用されているPCのログイン環境に合わせてください
+■6-02: STEP 2 Copy a file from the host to the container using the "cp" command
+* Replace "username" with your PC's login username
 
-・Windows
-docker cp C:¥Users¥ユーザー名¥Documents¥index.html apa000ex19:/usr/local/apache2/htdocs/
+- Windows
+docker cp C:\Users\username\Documents\index.html apa000ex19:/usr/local/apache2/htdocs/
 
-・Mac
-docker cp /Users/ユーザー名/Documents/index.html apa000ex19:/usr/local/apache2/htdocs/
+- Mac
+docker cp /Users/username/Documents/index.html apa000ex19:/usr/local/apache2/htdocs/
 
-・Linux
-docker cp /home/ユーザー名/index.html apa000ex19:/usr/local/apache2/htdocs/
-
-
-
-■6-02：STEP 1 「cp」コマンドを実行して、コンテナからホストへファイルをコピー
-・Windows
-docker cp apa000ex19:/usr/local/apache2/htdocs/index.html C:¥Users¥ユーザー名¥Documents¥
-
-・Mac
-docker cp apa000ex19:/usr/local/apache2/htdocs/index.html /Users/ユーザー名/Documents/
-
-・Linux
-docker cp apa000ex19:/usr/local/apache2/htdocs/index.html /home/ユーザー名/
+- Linux
+docker cp /home/username/index.html apa000ex19:/usr/local/apache2/htdocs/
 
 
 
-■6-03：記憶領域をマウントするコマンド  STEP 2 「run」コマンドでApacheコンテナを起動する
-・Windows
-docker run --name apa000ex20 -d -p 8090:80 -v C:¥Users¥ユーザー名¥Documents¥apa_folder:/usr/local/apache2/htdocs httpd
+■6-02: STEP 1 Copy a file from the container to the host using the "cp" command
+- Windows
+docker cp apa000ex19:/usr/local/apache2/htdocs/index.html C:\Users\username\Documents\
+
+- Mac
+docker cp apa000ex19:/usr/local/apache2/htdocs/index.html /Users/username/Documents/
+
+- Linux
+docker cp apa000ex19:/usr/local/apache2/htdocs/index.html /home/username/
 
 
-・Mac
-docker run --name apa000ex20 -d -p 8090:80 -v /Users/ ユーザー名/Documents/apa_folder:/usr/local/apache2/htdocs httpd
 
-・Linux
-docker run --name apa000ex20 -d -p 8090:80 -v /home/ユーザー名/apa_folder:/usr/local/apache2/htdocs httpd
-
+■6-03: Mount a storage volume STEP 2 Start an Apache container using the "run" command
+- Windows
+docker run --name apa000ex20 -d -p 8090:80 -v C:\Users\username\Documents\apa_folder:/usr/local/apache2/htdocs httpd
 
 
-■6-03：［手順］< 応用> ボリュームマウントしてみよう  STEP 1 マウントするボリュームを作成する
+- Mac
+docker run --name apa000ex20 -d -p 8090:80 -v /Users/username/Documents/apa_folder:/usr/local/apache2/htdocs httpd
+
+- Linux
+docker run --name apa000ex20 -d -p 8090:80 -v /home/username/apa_folder:/usr/local/apache2/htdocs httpd
+
+
+
+■6-03: [Steps] <Advanced> Try volume mounting STEP 1 Create a volume to mount
 docker volume create apa000vol1
 
 
 
-■6-03：STEP 2 「run」コマンドでApacheコンテナを起動する
+■6-03: STEP 2 Start an Apache container using the "run" command
 docker run --name apa000ex21 -d -p 8091:80 -v apa000vol1:/usr/local/apache2/htdocs httpd
 
 
 
-■6-03：STEP 3 「volume inspect」コマンドでボリュームの詳細情報を表示
-・ボリューム
+■6-03: STEP 3 Display volume details using the "volume inspect" command
+- Volume
 docker volume inspect apa000vol1
 
-・コンテナ
+- Container
 docker container inspect apa000ex21
 
 
 
-■6-03：STEP 4 後始末を行う
+■6-03: STEP 4 Clean up
 docker volume rm apa000vol1
 
 
 
-■6-03：COLUMN ボリュームのバックアップ
-・上記設定に沿った記述
-docker run --rm -v apa000vol1:/moto -v C:¥Users¥ユーザー名¥Documents:/saki busybox tar czvf /saki/backup_apa.tar.gz -C /moto .
+■6-03: COLUMN Volume backup
+- Command based on the above configuration
+docker run --rm -v apa000vol1:/source -v C:\Users\username\Documents:/dest busybox tar czvf /dest/backup_apa.tar.gz -C /source .
 
 
-・よく使う記述例（リストア）
-docker run --rm -v apa000vol2:/moto -v C:¥Users¥ユーザー名¥Documents:/saki busybox tar xzvf /saki/backup_apa.tar.gz -C /moto
+- Common usage example (restore)
+docker run --rm -v apa000vol2:/source -v C:\Users\username\Documents:/dest busybox tar xzvf /dest/backup_apa.tar.gz -C /source
 
 
 
-■6-04：STEP 0 Apacheコンテナを作成しておく
+■6-04: STEP 0 Create an Apache container
 docker run --name apa000ex22 -d -p 8092:80 httpd
 
 
 
 
-■6-04：STEP 1 コンテナをイメージに書き出す
+■6-04: STEP 1 Export a container as an image
 docker commit apa000ex22 ex22_original1
 
 
 
-■6-04：STEP 2 イメージが作成されたことを確認する
+■6-04: STEP 2 Verify the image was created
 docker image ls
 
 
 
-■6-04：［手順］＜応用＞コンテナをDockerfileでイメージ化しよう STEP 2 Dockerfile を作成する
-(chapter06フォルダのDockerfile 参照)
+■6-04: [Steps] <Advanced> Create an image from a container using a Dockerfile STEP 2 Create a Dockerfile
+(Refer to the Dockerfile in the chapter06 folder)
 
 
-■6-04：STEP 3 「build」コマンドを実行してイメージを作る
-・Windows
-docker build -t ex22_original2 C:¥Users¥ユーザー名¥Documents¥apa_folder¥
+■6-04: STEP 3 Build the image using the "build" command
+- Windows
+docker build -t ex22_original2 C:\Users\username\Documents\apa_folder\
 
-・Mac
-docker build -t ex22_original2 /Users/ユーザー名/Documents/apa_folder/
+- Mac
+docker build -t ex22_original2 /Users/username/Documents/apa_folder/
 
-・Linux
-docker build -t ex22_original2 /home/ユーザー名/apa_folder/
+- Linux
+docker build -t ex22_original2 /home/username/apa_folder/
 
 
-■6-04：STEP 4 イメージが作成されたことを確認する
+■6-04: STEP 4 Verify the image was created
 docker image ls
-
-
